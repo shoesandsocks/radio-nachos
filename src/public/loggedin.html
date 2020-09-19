@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radio nachos - home</title>
+    <link rel="stylesheet" href="loggedin.css" />
+  </head>
+
+  <body>
+    <div id="left-gutter"></div>
+    <main>
+      <h1>radio nachos playmaker</h1>
+      <form id="form" action="/make">
+        <fieldset>
+          <label for="tracks">how many tracks? (10 - 99)</label>
+          <br />
+          <input
+            id="tracks"
+            name="tracks"
+            type="range"
+            placeholder="20"
+            min="10"
+            max="99"
+            step="1"
+          />
+          <br />
+          <div id="count-and-button">
+            <span id="currentVal">20</span>
+            <button id="btn" type="submit">create playlist</button>
+          </div>
+        </fieldset>
+      </form>
+      <h2>Previous playlists</h2>
+      <ul id="previous">
+        <li>
+          <p id="nope">you have no previous playlists</p>
+        </li>
+      </ul>
+    </main>
+    <div id="right-gutter"></div>
+    <script>
+      document.getElementById("tracks").addEventListener("input", (ev) => {
+        document.getElementById("currentVal").innerText = tracks.value;
+      });
+      const ul = document.getElementById("previous");
+      fetch("/getPrev")
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.length) document.getElementById("nope").innerText = "";
+          json.forEach((pL) => {
+            const timestamp = new Date(+pL.name.split("-")[2]);
+            const options = {
+              weekday: "long",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            };
+            const displayDate = `${timestamp.toLocaleTimeString()}, ${timestamp.toLocaleDateString(
+              "en-US",
+              options
+            )}`;
+            const { id } = pL;
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="/radio?timestamp=${timestamp}&listId=${id}"><img src="${pL.images[1].url}" /><p>${displayDate}</p></a>`;
+            ul.appendChild(li);
+          });
+        })
+        .catch((e) => console.log(e));
+    </script>
+  </body>
+</html>

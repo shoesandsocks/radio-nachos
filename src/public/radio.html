@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radio nachos</title>
+    <style>
+      @font-face {
+        font-family: "Montserrat 200";
+        src: url("./fonts/montserrat-v15-latin-200.woff2") format("woff2"),
+          url("./fonts/montserrat-v15-latin-200.woff") format("woff");
+      }
+      :root {
+        --theme: #2d2d2d;
+      }
+      html,
+      body,
+      p {
+        margin: 0;
+        padding: 0;
+        font-family: "Montserrat 200", Arial;
+      }
+      iframe {
+        width: 100%;
+        height: calc(100vh - 2rem);
+      }
+      footer {
+        height: 2rem;
+        font-size: 0.9rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--theme);
+        color: white;
+        padding-left: 10px;
+        display: grid;
+        grid-template-columns: 1fr 110px;
+      }
+      footer p {
+        padding: 8px 0;
+      }
+      footer a {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      id="spot-frame"
+      width="300"
+      height="380"
+      frameborder="0"
+      allowtransparency="true"
+      allow="encrypted-media"
+    ></iframe>
+    <footer>
+      <p>
+        <span>radio nachos playlist created at </span>
+        <span id="link"></span>
+      </p>
+      <p><a href="https://www.pineandvine.com">♣ pineandvine</a></p>
+    </footer>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const timestamp = new Date(+params.get("timestamp"));
+      window.history.replaceState({}, document.title, "/");
+      const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      };
+      const displayDate = `${timestamp.toLocaleTimeString()}, ${timestamp.toLocaleDateString(
+        "en-US",
+        options
+      )}`;
+      document.getElementById(
+        "spot-frame"
+      ).src = `https://open.spotify.com/embed/playlist/${params.get("listId")}`;
+
+      document.getElementById("link").innerText = displayDate;
+    </script>
+
+    <script>
+      let root = document.documentElement;
+      try {
+        clearInterval(color);
+      } catch (e) {
+        console.log(e);
+      }
+      const setColor = () => {
+        const nowColor = localStorage.getItem("rich-text-theme") || "#2d2d2d"; // also default in CSS
+        root.style.setProperty("--theme", nowColor);
+      };
+      const getColor = () => {
+        fetch("https://colorshare.club/api/rich-text-theme.json")
+          .then((r) => r.json())
+          .then((json) => {
+            const color = json.items[0].title.slice(0, 7);
+            if (color) {
+              localStorage.setItem("rich-text-theme", color);
+              setColor();
+            }
+          })
+          .catch(() => console.log("something went wrong getting color"));
+      };
+
+      setColor();
+      getColor();
+      var color = setInterval(getColor, 300000); // 5 min
+    </script>
+  </body>
+</html>
