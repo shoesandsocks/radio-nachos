@@ -85,16 +85,21 @@ app.get("/make", async (req, res) => {
     `college-radio-${timestamp}`
   );
   const listId = list.body.id;
+
+  // TODO: a front-end that can build a dataset like this:
+  const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
+  const weirdsiesId = "2UVIa3qRKV7CMoSrF4ENvR";
+  const zeroesId = "3bBIkuqDS0cEGUBSblHfzT";
+  const tensId = "2jIEdsThLWpmvz4t13kCX9";
+  const elevatorId = "0NUtHPgeWm833NU14csQZi";
   const sampleMix = [
-    ["0NUtHPgeWm833NU14csQZi", 9],
-    ["549FJ3PFDdaLDTnX9WXwAK", 91],
+    [eightiesId, 10],
+    [zeroesId, 10],
+    [tensId, 10],
+    [weirdsiesId, 60],
+    [elevatorId, 10],
   ];
-  const tracksToAdd = await picker(
-    spotifyApi,
-    numberOfTracks,
-    sampleMix,
-    false
-  );
+  const tracksToAdd = await picker(spotifyApi, numberOfTracks, sampleMix);
   const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
   res.redirect(`radio?${querystring.stringify({ listId, timestamp })}`);
 });
