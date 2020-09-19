@@ -85,10 +85,8 @@ app.get("/make", async (req, res) => {
     `college-radio-${timestamp}`
   );
   const listId = list.body.id;
-  const addEm = await spotifyApi.addTracksToPlaylist(
-    listId,
-    picker(numberOfTracks)
-  );
+  const tracksToAdd = await picker(numberOfTracks);
+  const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
   res.redirect(`radio?${querystring.stringify({ listId, timestamp })}`);
 });
 
