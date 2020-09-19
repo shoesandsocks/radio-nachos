@@ -1,17 +1,9 @@
-require("dotenv").config();
-const SpotifyWebApi = require("spotify-web-api-node");
-
 const getWholePlaylist = require("./getWholePlaylist");
-const zeroes = require("../../stuff/zeroes");
-const tens = require("../../stuff/tens");
-const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
-const weirdsiesId = "2pWEbLMi3bvDAdozTgxgU5";
 
-const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.CID,
-  clientSecret: process.env.CS,
-  redirectUri: "https://www.porknachos.com/node/spotify-callback",
-});
+const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
+const weirdsiesId = "2UVIa3qRKV7CMoSrF4ENvR";
+const zeroesId = "3bBIkuqDS0cEGUBSblHfzT";
+const tensId = "2jIEdsThLWpmvz4t13kCX9";
 
 const Mr = () => Math.random();
 const rnd = (likelihoodOfTrue) => Mr() * 100 < likelihoodOfTrue;
@@ -19,25 +11,30 @@ const getRandomItemFromArray = (arr) => arr[(Mr() * arr.length) | 0];
 const selectOne = (arrayName) =>
   `spotify:track:${getRandomItemFromArray(arrayName)}`;
 
-module.exports = async (len) => {
-  const grant = await spotifyApi.clientCredentialsGrant();
-  // console.log("The access token expires in " + grant.body["expires_in"]);
-  // console.log("The access token is " + grant.body["access_token"]);
-  spotifyApi.setAccessToken(grant.body["access_token"]);
+module.exports = async (spotifyApi, len, mixObject = {}, def = true) => {
   const eighties = await getWholePlaylist(spotifyApi, eightiesId);
   const weirdsies = await getWholePlaylist(spotifyApi, weirdsiesId);
+  const zeroes = await getWholePlaylist(spotifyApi, zeroesId);
+  const tens = await getWholePlaylist(spotifyApi, tensId);
 
   const playANormalSong = () => {
-    const odds = Mr() * 100;
-    const decade = odds < 36 ? eighties : odds < 66 ? zeroes : tens;
-    const bort = selectOne(decade);
-    console.log(bort);
-    return bort;
+    if (def) {
+      const odds = Mr() * 100;
+      const decade =
+        odds < 15
+          ? eighties
+          : odds < 30
+          ? zeroes
+          : odds < 45
+          ? tens
+          : weirdsies;
+      return selectOne(decade);
+    }
   };
 
-  let arr = [];
+  const arr = [];
   for (var i = 0; i < len; i++) {
-    arr.push(rnd(85) ? playANormalSong() : selectOne(weirdsies));
+    arr.push(playANormalSong());
   }
   return arr;
 };
