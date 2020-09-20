@@ -64,7 +64,8 @@
     <script>
       const params = new URLSearchParams(window.location.search);
       const timestamp = new Date(+params.get("timestamp"));
-      window.history.replaceState({}, document.title, "/");
+      // TODO: turn this back on? or leave it on purpose?
+      // window.history.replaceState({}, document.title, "/");
       const options = {
         weekday: "long",
         year: "numeric",

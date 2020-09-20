@@ -6,8 +6,7 @@ const querystring = require("querystring");
 const cookieParser = require("cookie-parser");
 const SpotifyApi = require("spotify-web-api-node");
 
-const picker = require("./helpers/picker");
-const now = require("./helpers/now");
+const makeSpotifyPlaylist = require("./helpers/makeSpotifyPlaylist");
 
 const spotifyApi = new SpotifyApi();
 const port = process.env.PORT;
@@ -79,28 +78,24 @@ app.get("/callback", function (req, res) {
 });
 app.get("/make", async (req, res) => {
   const numberOfTracks = +req.query.tracks || 10;
-  const timestamp = now();
-  const list = await spotifyApi.createPlaylist(
-    "easement1",
-    `college-radio-${timestamp}`
-  );
-  const listId = list.body.id;
-
   // TODO: a front-end that can build a dataset like this:
   const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
   const weirdsiesId = "2UVIa3qRKV7CMoSrF4ENvR";
   const zeroesId = "3bBIkuqDS0cEGUBSblHfzT";
   const tensId = "2jIEdsThLWpmvz4t13kCX9";
   const elevatorId = "0NUtHPgeWm833NU14csQZi";
-  const sampleMix = [
-    [eightiesId, 10],
-    [zeroesId, 10],
-    [tensId, 10],
-    [weirdsiesId, 60],
-    [elevatorId, 10],
+  const mix = [
+    [eightiesId, 33],
+    [zeroesId, 25],
+    [tensId, 21],
+    [weirdsiesId, 19],
+    [elevatorId, 2],
   ];
-  const tracksToAdd = await picker(spotifyApi, numberOfTracks, sampleMix);
-  const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
+  const [listId, timestamp] = await makeSpotifyPlaylist(
+    spotifyApi,
+    numberOfTracks,
+    mix
+  );
   res.redirect(`radio?${querystring.stringify({ listId, timestamp })}`);
 });
 
@@ -117,26 +112,5 @@ app.get("/getPrev", async (req, res) => {
     res.json({ error: "nope " });
   }
 });
-// app.get("/refresh_token", function (req, res) {
-//   // requesting access token from refresh token
-//   const { refresh_token } = req.query;
-//   const authOptions = {
-//     url: "https://accounts.spotify.com/api/token",
-//     headers: {
-//       Authorization: `Basic ${Buffer.from(
-//         client_id + ":" + client_secret
-//       ).toString("base64")}`,
-//     },
-//     form: { grant_type: "refresh_token", refresh_token },
-//     json: true,
-//   };
-
-//   request.post(authOptions, function (error, response, body) {
-//     if (!error && response.statusCode === 200) {
-//       const { access_token } = body;
-//       res.send({ access_token });
-//     }
-//   });
-// });
 
 app.listen(port, () => console.log(`Listening on ${port}`));
