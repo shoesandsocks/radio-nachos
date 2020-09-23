@@ -11,12 +11,11 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
       `college-radio-${timestamp}`
     );
     const listId = list.body.id;
-    console.log(spotifyApi, numberOfTracks, mix);
     const tracksToAdd = await picker(spotifyApi, numberOfTracks, mix);
     const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
     return [listId, timestamp];
   } catch (error) {
-    console.log({ error });
+    // console.log({ error });
     console.log("naaah");
     return [];
   }

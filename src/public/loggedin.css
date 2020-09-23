@@ -17,14 +17,14 @@ main {
   flex-flow: column nowrap;
 }
 form {
-  width: 400px;
+  width: 600px;
   padding: 2rem 0;
 }
 fieldset {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-input {
+input[type="range"] {
   width: 100%;
   margin-top: 1rem;
   margin-bottom: 2rem;
@@ -63,7 +63,7 @@ li a p {
 #currentVal {
   font-size: 3rem;
 }
-button {
+#submit-btn {
   background: var(--spotify);
   padding: 1rem 2rem;
   color: white;
@@ -71,7 +71,7 @@ button {
   border-radius: 26px;
   cursor: pointer;
 }
-button:hover {
+#submit-btn:hover {
   transform: translate3d(1px, 1px, 0);
 }
 /** css tricks*/
@@ -179,4 +179,59 @@ input[type="range"]::-ms-fill-upper {
 }
 input[type="range"]:focus::-ms-fill-upper {
   background: #367ebd;
+}
+
+.one-entry-wrap {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+.one-entry-wrap label {
+  margin: 0 0.5rem;
+}
+input[type="text"] {
+  width: 40%;
+}
+input[type="number"] {
+  width: 3rem;
+}
+.add-entry-button {
+  border: none;
+  background: #2d2d2d;
+  color: white;
+  padding: 2px 8px 4px 8px;
+  border-radius: 26px;
+  margin-left: 1rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+#total {
+  font-size: 2rem;
+  margin-top: 2rem;
+  position: relative;
+  left: 60%;
+}
+#total:after {
+  content: "%";
+}
+
+.buttons {
+  display: flex;
+  width: 85%;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+#reset {
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  border: none;
+  background-color: crimson;
+  color: white;
+  padding: 4px 8px;
+}
+
+.visually-hidden {
+  display: none;
 }

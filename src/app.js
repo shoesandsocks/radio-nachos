@@ -76,27 +76,18 @@ app.get("/callback", function (req, res) {
     });
   }
 });
-app.get("/make", async (req, res) => {
-  const numberOfTracks = +req.query.tracks || 10;
-  // TODO: a front-end that can build a dataset like this:
-  const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
-  const weirdsiesId = "2UVIa3qRKV7CMoSrF4ENvR";
-  const zeroesId = "3bBIkuqDS0cEGUBSblHfzT";
-  const tensId = "2jIEdsThLWpmvz4t13kCX9";
-  const elevatorId = "0NUtHPgeWm833NU14csQZi";
-  const mix = [
-    [eightiesId, 33],
-    [zeroesId, 25],
-    [tensId, 21],
-    [weirdsiesId, 19],
-    [elevatorId, 2],
-  ];
+app.post("/make", async (req, res) => {
+  const { arrayOfArrays, numberOfTracks } = req.body;
+  // const eightiesId = "1EQ6eMB19i1XedKO4kpBW0";
+  // const mix = [
+  //   [eightiesId, 100],
+  // ];
   const [listId, timestamp] = await makeSpotifyPlaylist(
     spotifyApi,
     numberOfTracks,
-    mix
+    arrayOfArrays // mix
   );
-  res.redirect(`radio?${querystring.stringify({ listId, timestamp })}`);
+  return res.status(200).json({ listId, timestamp });
 });
 
 app.get("/getPrev", async (req, res) => {
@@ -109,7 +100,7 @@ app.get("/getPrev", async (req, res) => {
     );
     return res.json(playlists);
   } catch (e) {
-    res.json({ error: "nope " });
+    res.json({ error: "you are not logged into Spotify." });
   }
 });
 

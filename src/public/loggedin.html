@@ -11,15 +11,47 @@
     <div id="left-gutter"></div>
     <main>
       <h1>radio nachos playmaker</h1>
-      <form id="form" action="/make">
-        <fieldset>
+      <form id="creator-form" action="javascript:void(0)">
+        <fieldset id="fieldset">
+          <button id="reset">reset form</button>
+          <div id="all-entries">
+            <div class="one-entry-wrap">
+              <label for="playlist1">playlist ID</label>
+              <input
+                type="text"
+                name="playlist1"
+                class="playlist-id"
+                data-lpignore="true"
+                required
+              />
+              <label for="percent1">%</label>
+              <input
+                type="number"
+                class="percentage"
+                name="percent1"
+                value="100"
+                min="1"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="add-entry-button"
+                id="add-entry-button-1"
+                value="1"
+              >
+                add more
+              </button>
+            </div>
+          </div>
+          <p id="total"></p>
           <label for="tracks">how many tracks? (10 - 99)</label>
           <br />
           <input
-            id="tracks"
-            name="tracks"
             type="range"
-            placeholder="20"
+            id="tracks-input"
+            name="tracks"
+            value="20"
             min="10"
             max="99"
             step="1"
@@ -27,10 +59,11 @@
           <br />
           <div id="count-and-button">
             <span id="currentVal">20</span>
-            <button id="btn" type="submit">create playlist</button>
+            <button id="submit-btn" type="submit">create playlist</button>
           </div>
         </fieldset>
       </form>
+
       <h2>Previous playlists</h2>
       <ul id="previous">
         <li>
@@ -39,34 +72,10 @@
       </ul>
     </main>
     <div id="right-gutter"></div>
+    <script src="loggedin.js"></script>
     <script>
-      document.getElementById("tracks").addEventListener("input", (ev) => {
-        document.getElementById("currentVal").innerText = tracks.value;
-      });
-      const ul = document.getElementById("previous");
-      fetch("/getPrev")
-        .then((res) => res.json())
-        .then((json) => {
-          if (json.length) document.getElementById("nope").innerText = "";
-          json.forEach((pL) => {
-            const timestamp = new Date(+pL.name.split("-")[2]);
-            const options = {
-              weekday: "long",
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            };
-            const displayDate = `${timestamp.toLocaleTimeString()}, ${timestamp.toLocaleDateString(
-              "en-US",
-              options
-            )}`;
-            const { id } = pL;
-            const li = document.createElement("li");
-            li.innerHTML = `<a href="/radio?timestamp=${timestamp}&listId=${id}"><img src="${pL.images[1].url}" /><p>${displayDate}</p></a>`;
-            ul.appendChild(li);
-          });
-        })
-        .catch((e) => console.log(e));
+      let d = new Date();
+      console.log("Today's date is " + d);
     </script>
   </body>
 </html>
