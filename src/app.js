@@ -96,7 +96,7 @@ app.get("/getPrev", async (req, res) => {
     const { id } = me.body;
     const all = await spotifyApi.getUserPlaylists(id);
     const playlists = all.body.items.filter((p) =>
-      p.name.match(/^college\-radio\-/)
+      p.name.match(/^radio\-nachos\-/)
     );
     return res.json(playlists);
   } catch (e) {
