@@ -8,7 +8,7 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
     const { id } = me.body;
     const list = await spotifyApi.createPlaylist(
       id,
-      `college-radio-${timestamp}`
+      `radio-nachos-${timestamp}`
     );
     const listId = list.body.id;
     const tracksToAdd = await picker(spotifyApi, numberOfTracks, mix);
