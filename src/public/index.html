@@ -8,11 +8,19 @@
         src: url("./fonts/montserrat-v15-latin-regular.woff2 ") format("woff2"),
           url("./fonts/montserrat-v15-latin-regular.woff") format("woff");
       }
+      :root {
+        --spotify: #1db954;
+        --purple: rgb(218, 83, 245);
+      }
       html,
       body {
         padding: 0;
         margin: 0;
+      }
+      body {
         font-family: Montserrat, Arial;
+        width: 400px;
+        margin: auto;
       }
       main {
         display: flex;
@@ -20,20 +28,39 @@
         align-items: center;
         flex-flow: column nowrap;
       }
+      h1,
+      h2 {
+        text-align: center;
+      }
       a {
         text-decoration: none;
-        background: #1db954;
+        background: var(--spotify);
         padding: 1rem 2rem;
         color: white;
         border-radius: 26px;
+      }
+      p {
+        line-height: 2rem;
+      }
+      .oomph {
+        border-bottom: 2px solid var(--spotify);
+      }
+      .purpoomph {
+        border-bottom: 2px solid var(--purple);
       }
     </style>
   </head>
 
   <body>
     <main>
-      <h1>This is radio nachos</h1>
-      <p>A radio-nachos playlist maker</p>
+      <h1>This is <span class="oomph">radio nachos</span></h1>
+      <h2>Making <span class="purpoomph">playlists</span> from playlists</h2>
+      <p>
+        Make a list of Spotify playlist URIs (or just the ID #), and tell
+        <span class="oomph">radio nachos</span> what percentage of the final
+        playlist should come from each.
+      </p>
+      <p></p>
       <a href="/login">Log in with Spotify</a>
     </main>
   </body>

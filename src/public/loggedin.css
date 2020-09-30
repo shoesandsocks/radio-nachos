@@ -7,6 +7,22 @@
   --black: #2d2d2d;
   --spotify: #1db954;
 }
+::-webkit-input-placeholder {
+  /* Edge */
+  color: var(--spotify);
+  opacity: 0.5;
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: var(--spotify);
+  opacity: 0.5;
+}
+
+::placeholder {
+  color: var(--spotify);
+  opacity: 0.5;
+}
 body {
   font-family: "Montserrat 200", Arial;
 }
@@ -186,13 +202,14 @@ input[type="range"]:focus::-ms-fill-upper {
   margin-bottom: 0.75rem;
 }
 .one-entry-wrap label {
-  margin: 0 0.5rem;
+  margin: 0 0.25rem;
 }
 input[type="text"] {
   width: 40%;
 }
 input[type="number"] {
   width: 3rem;
+  margin-left: 0.25rem;
 }
 .add-entry-button {
   border: none;
@@ -215,6 +232,10 @@ input[type="number"] {
   content: "%";
 }
 
+.one-playlist-line {
+  display: flex;
+  justify-content: space-between;
+}
 .buttons {
   display: flex;
   width: 85%;

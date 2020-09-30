@@ -1,10 +1,11 @@
 const getWholePlaylist = require("./getWholePlaylist");
+const getPlaylistName = require("./getPlaylistName");
 
 const Mr = () => Math.random();
 const r = (arr) => arr[(Mr() * arr.length) | 0];
 const selectOne = (arrayName) => `spotify:track:${r(arrayName)}`;
 
-module.exports = async (spotifyApi, len, mix) => {
+module.exports = async (spotifyApi, numberOfTracks, mix) => {
   /** MIX is array of 2-item arrays:
    * - ["id of each pL it wants to pick from",
    * - numeric percentage out of 100]
@@ -13,22 +14,41 @@ module.exports = async (spotifyApi, len, mix) => {
    * then applies the percentages and picks
    */
   try {
-    const arrToReturn = [];
+    const objToReturn = {
+      tracksToAdd: [],
+      compositionData: [
+        // {
+        //   id: 0,
+        //   playlistName: "Bort",
+        //   playlistId: "abcde1345",
+        //   percentage: 100,
+        // },
+      ],
+    };
     let sum = 0;
     for (var i = 0; i < mix.length; i++) {
       try {
-        mix[i][0] = await getWholePlaylist(spotifyApi, mix[i][0]);
+        const playlistId = mix[i][0];
+        const percentage = mix[i][1];
+        const playlistName = await getPlaylistName(spotifyApi, playlistId);
+        objToReturn.compositionData.push({
+          id: i,
+          playlistId,
+          percentage,
+          playlistName,
+        });
+        mix[i][0] = await getWholePlaylist(spotifyApi, playlistId);
+        sum += percentage;
       } catch (e) {
-        console.log("couldn't get playlist from id. hope you like Berzerk.");
-        mix[i][0] = ["3ieAoviJEUB2MCyCjkL9aw"];
+        console.log(e);
+        console.log("gorndafd");
       }
-      sum += mix[i][1];
     }
     if (sum !== 100) {
       console.log("that doesn't add up to 100");
-      return ["spotify:track:3ieAoviJEUB2MCyCjkL9aw"];
+      return objToReturn;
     }
-    for (var j = 0; j < len; j++) {
+    for (var j = 0; j < numberOfTracks; j++) {
       const odds = Math.floor(Math.random() * Math.floor(100));
       let climbingOdds = 0;
       for (var k = 1; k < mix.length + 1; k++) {
@@ -36,19 +56,19 @@ module.exports = async (spotifyApi, len, mix) => {
         climbingOdds += currentOdds;
         if (odds < climbingOdds) {
           const trackString = selectOne(mix[k - 1][0]);
-          arrToReturn.push(trackString);
+          objToReturn.tracksToAdd.push(trackString);
           break;
         }
       }
     }
-    return arrToReturn;
+    // remove track-lookup errors
+    objToReturn.tracksToAdd = objToReturn.tracksToAdd.filter(
+      (t) => t !== "spotify:track:null"
+    );
+    return objToReturn;
   } catch (error) {
-    console.log(
-      "I don't think you should ever get here, given the try catch around the await above"
-    );
-    console.log(
-      "Error somewhere in the picker, either gettingWholePlaylist or selectOne'ing..."
-    );
-    return [];
+    console.log(error);
+    console.log("Error somewhere in the picker...");
+    return objToReturn;
   }
 };

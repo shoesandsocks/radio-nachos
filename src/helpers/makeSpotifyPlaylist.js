@@ -11,11 +11,17 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
       `radio-nachos-${timestamp}`
     );
     const listId = list.body.id;
-    const tracksToAdd = await picker(spotifyApi, numberOfTracks, mix);
+    const tracksAndCompositionData = await picker(
+      spotifyApi,
+      numberOfTracks,
+      mix
+    );
+    console.log("gloop: ", tracksAndCompositionData);
+    const { tracksToAdd, compositionData } = tracksAndCompositionData;
     const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
-    return [listId, timestamp];
+    return [listId, compositionData, timestamp];
   } catch (error) {
-    // console.log({ error });
+    console.log({ error });
     console.log("naaah");
     return [];
   }

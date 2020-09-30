@@ -14,18 +14,22 @@ const arr = () => Array.from(document.getElementsByClassName("percentage"));
 function getPlaylists() {
   fetch("/getPrev")
     .then((res) => res.json())
-    .then((json) => {
+    .then(({ playlists, compositions, error }) => {
       const nope = document.getElementById("nope");
-      if (json.error) {
+      if (error) {
         form.classList.add("visually-hidden");
         h2.classList.add("visually-hidden");
-        return (nope.innerText = json.error);
+        return (nope.innerText = error);
       }
-      if (json.length > 0) nope.innerText = "";
-      json.forEach((pL) => {
-        const timestring = +pL.name.split("-")[2];
+      if (playlists.length > 0) nope.innerText = "";
+      playlists.forEach((pL) => {
+        const { id } = pL;
+        const timestring = +pL.name.split("-")[2]; // the part after radio-nachos-
         const timestamp = new Date(timestring);
-        console.log(timestamp);
+        const composition = compositions.filter(
+          (comp) => comp.timestamp === timestring.toString()
+        )[0];
+        console.log(composition);
         const options = {
           weekday: "long",
           year: "numeric",
@@ -36,9 +40,28 @@ function getPlaylists() {
           "en-US",
           options
         )}`;
-        const { id } = pL;
         const li = document.createElement("li");
-        li.innerHTML = `<a href="/radio?timestamp=${timestring}&listId=${id}"><img src="${pL.images[1].url}" /><p>${displayDate}</p></a>`;
+        li.classList.add("playlist-entry-wrap");
+        if (composition !== undefined) {
+          const { compositionData, numberOfTracks } = composition;
+          const compositionHTML = compositionData
+            .map((compo) => {
+              return `<p class="one-playlist-line">${compo.playlistName} (${compo.playlistId})<span>${compo.percentage}%</span></p>`;
+            })
+            .join("");
+          li.innerHTML = `
+            <a href="/radio?timestamp=${timestring}&listId=${id}">
+              <img src="${pL.images[1].url}" />
+              <p>${displayDate}</p>
+            </a>
+            ${compositionHTML}
+            `;
+        } else {
+          li.innerHTML = `<a href="/radio?timestamp=${timestring}&listId=${id}">
+          <img src="${pL.images[1].url}" />
+          <p>${displayDate}</p>
+        </a>`;
+        }
         ul.appendChild(li);
       });
     })
@@ -51,8 +74,12 @@ function validate(obj) {
   const length = keys.length / 2;
   const array = [];
   for (var i = 0; i < length; i++) {
-    if (obj[`playlist${i + 1}`] !== "" && obj[`percent${i + 1}`] !== "") {
-      array.push([obj[`playlist${i + 1}`], +obj[`percent${i + 1}`]]);
+    const playlistName = obj[`playlist${i + 1}`].replace(
+      "spotify:playlist:",
+      ""
+    );
+    if (playlistName !== "" && obj[`percent${i + 1}`] !== "") {
+      array.push([playlistName, +obj[`percent${i + 1}`]]);
     }
   }
   if (array.length !== length) return "We have a problem.";
@@ -118,7 +145,7 @@ function makeHtml(num) {
   btn.classList.add("add-entry-button");
   btn.value = num;
   btn.innerText = "add more";
-  return [label1, input1, label2, input2, btn];
+  return [label1, input1, input2, label2, btn];
 }
 function sumTotal() {
   let sum = 0;
