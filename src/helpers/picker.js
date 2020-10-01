@@ -41,7 +41,6 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
         sum += percentage;
       } catch (e) {
         console.log(e);
-        console.log("gorndafd");
       }
     }
     if (sum !== 100) {

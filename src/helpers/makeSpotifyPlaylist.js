@@ -16,13 +16,11 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
       numberOfTracks,
       mix
     );
-    console.log("gloop: ", tracksAndCompositionData);
     const { tracksToAdd, compositionData } = tracksAndCompositionData;
     const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
     return [listId, compositionData, timestamp];
   } catch (error) {
     console.log({ error });
-    console.log("naaah");
     return [];
   }
 };

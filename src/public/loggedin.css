@@ -55,7 +55,7 @@ li a {
   display: grid;
   grid-template-columns: 100px 1fr;
   background-color: var(--black);
-  width: 400px;
+  width: 600px;
   cursor: pointer;
   text-decoration: none;
   transition-duration: 0.2s;
@@ -79,6 +79,8 @@ li a p {
 #currentVal {
   font-size: 3rem;
 }
+.delete-playlist-btn,
+.make-another-btn,
 #submit-btn {
   background: var(--spotify);
   padding: 1rem 2rem;
@@ -87,6 +89,8 @@ li a p {
   border-radius: 26px;
   cursor: pointer;
 }
+.delete-playlist-btn,
+.make-another-btn,
 #submit-btn:hover {
   transform: translate3d(1px, 1px, 0);
 }
@@ -270,4 +274,16 @@ input[type="number"] {
 
 .visually-hidden {
   display: none;
+}
+
+.playlist-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.delete-playlist-btn {
+  background: crimson;
 }

@@ -52,10 +52,15 @@ function getPlaylists() {
           li.innerHTML = `
             <a href="/radio?timestamp=${timestring}&listId=${id}">
               <img src="${pL.images[1].url}" />
-              <p>${displayDate}</p>
+              <p>${displayDate} - ${numberOfTracks} songs</p>
             </a>
             ${compositionHTML}
-            `;
+            <div class="playlist-buttons">
+            <button class="make-another-btn" data-composition='${JSON.stringify(
+              compositionData
+            )}' onclick="populateForm(event)">Make another like this</button>
+            <button class="delete-playlist-btn" id="playlist-${id}" onClick="deleteAPlaylist(event)">delete this playlist</button>
+            </div>`;
         } else {
           li.innerHTML = `<a href="/radio?timestamp=${timestring}&listId=${id}">
           <img src="${pL.images[1].url}" />
@@ -147,7 +152,30 @@ function attemptNameLookup(ev, num) {
     console.log("error attempting lookup of playlist name");
   }
 }
-function makeHtml(num) {
+function populateForm(e) {
+  e.preventDefault();
+  try {
+    const composition = JSON.parse(e.target.dataset.composition);
+    // wipe out existing form (modified from reset func)
+    while (allEntries.hasChildNodes()) {
+      allEntries.removeChild(allEntries.lastChild);
+    }
+    // total will be 100 b/c coming from valid data
+    total.innerText = 100;
+    // add new
+    composition.forEach((comp, idx) => {
+      const num = idx + 1;
+      const upperDiv = makeUpperDiv(idx, comp.playlistName);
+      const html = makeHtml(num, comp);
+      allEntries.append(upperDiv, html);
+      // get numbers working again
+      addChangeHandlerToPercs();
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+function makeHtml(num, values = {}) {
   const label1 = document.createElement("label");
   label1.setAttribute("for", `playlist${num}`);
   label1.innerText = "playlist ID";
@@ -158,8 +186,9 @@ function makeHtml(num) {
   input1.classList.add("playlist-id");
   input1.setAttribute("data-lpignore", "true");
   input1.setAttribute("required", true);
+  if (values.playlistId) input1.value = values.playlistId;
   const label2 = document.createElement("label");
-  label2.setAttribute("for", `percent{num}`);
+  label2.setAttribute("for", `percent${num}`);
   label2.innerText = "%";
   const input2 = document.createElement("input");
   input2.classList.add("percentage");
@@ -168,6 +197,7 @@ function makeHtml(num) {
   input2.setAttribute("max", "100");
   input2.setAttribute("step", "1");
   input2.setAttribute("name", `percent${num}`);
+  if (values.percentage) input2.value = values.percentage;
   const p = document.createElement("p");
   p.setAttribute("id", `playlist${num}-name-lookup`);
   const btn = document.createElement("button");
@@ -176,7 +206,10 @@ function makeHtml(num) {
   btn.classList.add("add-entry-button");
   btn.value = num;
   btn.innerText = "add more";
-  return [label1, input1, input2, label2, btn, p];
+  const newEntry = document.createElement("div");
+  newEntry.classList.add("one-entry-wrap");
+  newEntry.append(label1, input1, input2, label2, btn, p);
+  return newEntry;
 }
 function sumTotal() {
   let sum = 0;
@@ -197,24 +230,48 @@ function handleAddButton(e, resetToggle) {
       .getElementById(`add-entry-button-${currentCount}`)
       .classList.add("visually-hidden");
   }
-  const newLookup = document.createElement("div");
-  newLookup.classList.add("above-entry-wrap");
-  newSpacer = document.createElement("p");
-  newSpacer.classList.add("label-spacer");
-  newP = document.createElement("p");
-  newP.classList.add("playlist-name-lookup");
-  newP.setAttribute("id", `playlist${currentCount + 1}-name-lookup`);
-  newLookup.append(newSpacer, newP);
-  const newEntry = document.createElement("div");
-  const eles = makeHtml(resetToggle ? 1 : currentCount + 1);
-  newEntry.classList.add("one-entry-wrap");
-  newEntry.append(...eles);
+  const newLookup = makeUpperDiv(currentCount);
+  const newEntry = makeHtml(resetToggle ? 1 : currentCount + 1);
   allEntries.appendChild(newLookup);
   allEntries.appendChild(newEntry);
   document
     .getElementById(`add-entry-button-${resetToggle ? 1 : currentCount + 1}`)
     .addEventListener("click", handleAddButton);
   addChangeHandlerToPercs();
+}
+function deleteAPlaylist(event) {
+  event.preventDefault();
+  const idToDelete = event.target.id.replace("playlist-", "");
+  console.log(idToDelete);
+  fetch("/deletePlaylist", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idToDelete }),
+  })
+    .then((r) => {
+      if (r.status === 200) {
+        window.location.reload();
+      } else {
+        alert(`Something went wrong. Server status: ${r.status}`);
+      }
+    })
+    .catch((e) => {
+      alert(`Something went wrong. ${JSON.stringify(e)}`);
+    });
+}
+function makeUpperDiv(count, name = "") {
+  const newLookup = document.createElement("div");
+  newLookup.classList.add("above-entry-wrap");
+  newSpacer = document.createElement("p");
+  newSpacer.classList.add("label-spacer");
+  newP = document.createElement("p");
+  newP.classList.add("playlist-name-lookup");
+  newP.setAttribute("id", `playlist${count + 1}-name-lookup`);
+  if (name !== "") newP.innerText = name;
+  newLookup.append(newSpacer, newP);
+  return newLookup;
 }
 
 /* okay, funcs are all set. add immediate listeners and call funcs */

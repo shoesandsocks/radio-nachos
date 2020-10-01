@@ -92,6 +92,21 @@ MongoClient.connect(
         });
       }
     });
+    app.post("/deletePlaylist", (req, res) => {
+      const { idToDelete } = req.body;
+      collection
+        .deleteOne({ listId: idToDelete })
+        .then(async () => {
+          const SpotSuccess = await spotifyApi.unfollowPlaylist(idToDelete);
+        })
+        .then(() => {
+          return res.json({ message: `deleted` });
+        })
+        .catch((e) => {
+          console.log(e);
+          return res.sendStatus(500);
+        });
+    });
     app.post("/playlistlookup", async (req, res) => {
       const { str } = req.body;
       ident = str.split(":")[2];
@@ -119,8 +134,6 @@ MongoClient.connect(
         });
         return res.json({ listId, timestamp });
       } catch (err) {
-        console.log(err);
-        console.log("something went wrong");
         return res.json({ error: "Something failed in making " });
       }
     });
