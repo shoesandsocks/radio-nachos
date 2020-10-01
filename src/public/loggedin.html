@@ -8,7 +8,6 @@
   </head>
 
   <body>
-    <div id="left-gutter"></div>
     <main>
       <h1>radio nachos playmaker</h1>
       <form id="creator-form" action="javascript:void(0)">
@@ -35,7 +34,7 @@
                 class="percentage"
                 id="percent1"
                 name="percent1"
-                value="100"
+                value="0"
                 min="1"
                 max="100"
                 step="1"
@@ -49,9 +48,19 @@
               >
                 add more
               </button>
+              <button
+                type="button"
+                class="remove-entry-button"
+                id="remove-entry-button-1"
+                value="1"
+              >
+                remove this
+              </button>
             </div>
           </div>
           <p id="total"></p>
+          <p id="currentVal">20</p>
+
           <label for="tracks">how many tracks? (10 - 99)</label>
           <br />
           <input
@@ -65,7 +74,7 @@
           />
           <br />
           <div id="count-and-button">
-            <span id="currentVal">20</span>
+            <span>&nbsp;</span>
             <button id="submit-btn" type="submit">create playlist</button>
           </div>
         </fieldset>
@@ -78,11 +87,6 @@
         </li>
       </ul>
     </main>
-    <div id="right-gutter"></div>
     <script src="loggedin.js"></script>
-    <script>
-      let d = new Date();
-      console.log("Today's date is " + d);
-    </script>
   </body>
 </html>

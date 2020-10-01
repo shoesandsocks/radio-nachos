@@ -1,5 +1,6 @@
 const form = document.getElementById("creator-form");
 const addButton1 = document.getElementById("add-entry-button-1");
+const removeButton1 = document.getElementById("remove-entry-button-1");
 const total = document.getElementById("total");
 const allEntries = document.getElementById("all-entries");
 const reset = document.getElementById("reset");
@@ -206,9 +207,15 @@ function makeHtml(num, values = {}) {
   btn.classList.add("add-entry-button");
   btn.value = num;
   btn.innerText = "add more";
+  const btn2 = document.createElement("button");
+  btn2.setAttribute("type", "button");
+  btn2.setAttribute("id", `remove-entry-button-${num}`);
+  btn2.classList.add("remove-entry-button");
+  btn2.value = num;
+  btn2.innerText = "remove this";
   const newEntry = document.createElement("div");
   newEntry.classList.add("one-entry-wrap");
-  newEntry.append(label1, input1, input2, label2, btn, p);
+  newEntry.append(label1, input1, input2, label2, btn, btn2, p);
   return newEntry;
 }
 function sumTotal() {
@@ -229,6 +236,9 @@ function handleAddButton(e, resetToggle) {
     document
       .getElementById(`add-entry-button-${currentCount}`)
       .classList.add("visually-hidden");
+    // document
+    //   .getElementById(`remove-entry-button-${currentCount}`)
+    //   .classList.add("visually-hidden");
   }
   const newLookup = makeUpperDiv(currentCount);
   const newEntry = makeHtml(resetToggle ? 1 : currentCount + 1);
@@ -237,6 +247,9 @@ function handleAddButton(e, resetToggle) {
   document
     .getElementById(`add-entry-button-${resetToggle ? 1 : currentCount + 1}`)
     .addEventListener("click", handleAddButton);
+  document
+    .getElementById(`remove-entry-button-${resetToggle ? 1 : currentCount + 1}`)
+    .addEventListener("click", handleRemoveButton);
   addChangeHandlerToPercs();
 }
 function deleteAPlaylist(event) {
@@ -273,7 +286,10 @@ function makeUpperDiv(count, name = "") {
   newLookup.append(newSpacer, newP);
   return newLookup;
 }
-
+function handleRemoveButton(e) {
+  e.preventDefault();
+  console.log(e.target.value);
+}
 /* okay, funcs are all set. add immediate listeners and call funcs */
 reset.addEventListener("click", (e) => {
   while (allEntries.hasChildNodes()) {
@@ -285,6 +301,7 @@ reset.addEventListener("click", (e) => {
 playlist1.addEventListener("change", (e) => attemptNameLookup(e, 1));
 submitBtn.addEventListener("click", handleSubmit);
 addButton1.addEventListener("click", (e) => handleAddButton(e, false));
+removeButton1.addEventListener("click", (e) => handleRemoveButton(e));
 addChangeHandlerToPercs();
 sumTotal(arr()); // weird func, used.
 getPlaylists();
