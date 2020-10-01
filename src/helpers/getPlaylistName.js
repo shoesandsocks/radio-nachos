@@ -4,7 +4,7 @@ const getPlaylistName = async (spotifyApi, identifier) => {
     return data.body.name;
   } catch (e) {
     console.log("Error getting playlist name from given ID");
-    return "dunno";
+    return "dunno that playlist ID";
   }
 };
 

@@ -8,6 +8,7 @@ const SpotifyApi = require("spotify-web-api-node");
 const MongoClient = require("mongodb").MongoClient;
 
 const makeSpotifyPlaylist = require("./helpers/makeSpotifyPlaylist");
+const getPlaylistName = require("./helpers/getPlaylistName");
 
 const spotifyApi = new SpotifyApi();
 const port = process.env.PORT;
@@ -90,6 +91,13 @@ MongoClient.connect(
           }
         });
       }
+    });
+    app.post("/playlistlookup", async (req, res) => {
+      const { str } = req.body;
+      ident = str.split(":")[2];
+      const name = await getPlaylistName(spotifyApi, ident);
+      if (name) return res.json({ name });
+      return res.json({ error: "not found " });
     });
     app.post("/make", async (req, res) => {
       try {

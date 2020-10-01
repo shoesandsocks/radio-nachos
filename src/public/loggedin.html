@@ -15,11 +15,16 @@
         <fieldset id="fieldset">
           <button id="reset">reset form</button>
           <div id="all-entries">
+            <div class="above-entry-wrap">
+              <p class="label-spacer"></p>
+              <p class="playlist-name-lookup" id="playlist1-name-lookup"></p>
+            </div>
             <div class="one-entry-wrap">
               <label for="playlist1">playlist ID</label>
               <input
                 type="text"
                 name="playlist1"
+                id="playlist1"
                 class="playlist-id"
                 data-lpignore="true"
                 required
@@ -28,6 +33,7 @@
               <input
                 type="number"
                 class="percentage"
+                id="percent1"
                 name="percent1"
                 value="100"
                 min="1"

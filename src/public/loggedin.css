@@ -197,8 +197,23 @@ input[type="range"]:focus::-ms-fill-upper {
   background: #367ebd;
 }
 
+.above-entry-wrap {
+  display: flex;
+  height: 16px;
+  margin-bottom: 0.25rem;
+}
+.label-spacer {
+  width: 85px;
+  margin: 0;
+}
+.playlist-name-lookup {
+  margin: 0;
+  color: var(--spotify);
+  font: 1rem Arial;
+}
 .one-entry-wrap {
   display: flex;
+  align-items: center;
   margin-bottom: 0.75rem;
 }
 .one-entry-wrap label {

@@ -6,6 +6,7 @@ const reset = document.getElementById("reset");
 const submitBtn = document.getElementById("submit-btn");
 const ul = document.getElementById("previous");
 const h2 = document.getElementsByTagName("h2")[0];
+const playlist1 = document.getElementById("playlist1");
 const trackInput = document.getElementById("tracks-input");
 const tracksCount = document.getElementById("currentVal");
 // here's a weird one - a func, not const-var
@@ -29,7 +30,6 @@ function getPlaylists() {
         const composition = compositions.filter(
           (comp) => comp.timestamp === timestring.toString()
         )[0];
-        console.log(composition);
         const options = {
           weekday: "long",
           year: "numeric",
@@ -119,6 +119,34 @@ function handleSubmit(e) {
       });
   }
 }
+function attemptNameLookup(ev, num) {
+  try {
+    const el = document.getElementById(`playlist${num}-name-lookup`);
+    const str = ev.target.value;
+    if (!str.match(/^spotify:playlist:[a-zA-Z0-9]{22}$/)) {
+      el.innerText = "invalid code. is that a playlist?";
+    } else {
+      // network lookup
+      fetch("/playlistlookup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ str }),
+      })
+        .then((r) => r.json())
+        .then(({ error, name }) => {
+          console.log(error, name);
+          if (name && !error) {
+            el.innerText = name;
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  } catch {
+    console.log("error attempting lookup of playlist name");
+  }
+}
 function makeHtml(num) {
   const label1 = document.createElement("label");
   label1.setAttribute("for", `playlist${num}`);
@@ -126,6 +154,7 @@ function makeHtml(num) {
   const input1 = document.createElement("input");
   input1.setAttribute("type", "text");
   input1.setAttribute("name", `playlist${num}`);
+  input1.addEventListener("change", (e) => attemptNameLookup(e, num));
   input1.classList.add("playlist-id");
   input1.setAttribute("data-lpignore", "true");
   input1.setAttribute("required", true);
@@ -139,13 +168,15 @@ function makeHtml(num) {
   input2.setAttribute("max", "100");
   input2.setAttribute("step", "1");
   input2.setAttribute("name", `percent${num}`);
+  const p = document.createElement("p");
+  p.setAttribute("id", `playlist${num}-name-lookup`);
   const btn = document.createElement("button");
   btn.setAttribute("type", "button");
   btn.setAttribute("id", `add-entry-button-${num}`);
   btn.classList.add("add-entry-button");
   btn.value = num;
   btn.innerText = "add more";
-  return [label1, input1, input2, label2, btn];
+  return [label1, input1, input2, label2, btn, p];
 }
 function sumTotal() {
   let sum = 0;
@@ -166,10 +197,19 @@ function handleAddButton(e, resetToggle) {
       .getElementById(`add-entry-button-${currentCount}`)
       .classList.add("visually-hidden");
   }
+  const newLookup = document.createElement("div");
+  newLookup.classList.add("above-entry-wrap");
+  newSpacer = document.createElement("p");
+  newSpacer.classList.add("label-spacer");
+  newP = document.createElement("p");
+  newP.classList.add("playlist-name-lookup");
+  newP.setAttribute("id", `playlist${currentCount + 1}-name-lookup`);
+  newLookup.append(newSpacer, newP);
   const newEntry = document.createElement("div");
   const eles = makeHtml(resetToggle ? 1 : currentCount + 1);
   newEntry.classList.add("one-entry-wrap");
   newEntry.append(...eles);
+  allEntries.appendChild(newLookup);
   allEntries.appendChild(newEntry);
   document
     .getElementById(`add-entry-button-${resetToggle ? 1 : currentCount + 1}`)
@@ -185,6 +225,7 @@ reset.addEventListener("click", (e) => {
   total.innerText = 0;
   handleAddButton(e, true);
 });
+playlist1.addEventListener("change", (e) => attemptNameLookup(e, 1));
 submitBtn.addEventListener("click", handleSubmit);
 addButton1.addEventListener("click", (e) => handleAddButton(e, false));
 addChangeHandlerToPercs();
