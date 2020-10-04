@@ -5,8 +5,9 @@ const getWholePlaylist = async (
   limit = 100,
   accumulator = []
 ) => {
+  const cleanedIdentifier = identifier.replace("spotify:playlist:", "");
   try {
-    const chunk = await spotifyApi.getPlaylistTracks(identifier, {
+    const chunk = await spotifyApi.getPlaylistTracks(cleanedIdentifier, {
       offset,
       limit,
     });
@@ -15,7 +16,7 @@ const getWholePlaylist = async (
     if (chunk.body.total > offset + limit) {
       return getWholePlaylist(
         spotifyApi,
-        identifier,
+        cleanedIdentifier,
         offset + limit,
         limit,
         newArr
