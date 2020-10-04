@@ -1,10 +1,11 @@
 const getPlaylistName = async (spotifyApi, identifier) => {
   try {
-    const data = await spotifyApi.getPlaylist(identifier);
+    const cleaned = identifier.replace("spotify:playlist:", "");
+    const data = await spotifyApi.getPlaylist(cleaned);
     return data.body.name;
   } catch (e) {
     console.log("Error getting playlist name from given ID");
-    return "dunno that playlist ID";
+    return "don't recognize that playlist ID";
   }
 };
 

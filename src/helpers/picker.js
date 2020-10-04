@@ -5,13 +5,20 @@ const Mr = () => Math.random();
 const r = (arr) => arr[(Mr() * arr.length) | 0];
 const selectOne = (arrayName) => `spotify:track:${r(arrayName)}`;
 
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+};
+
 module.exports = async (spotifyApi, numberOfTracks, mix) => {
   /** MIX is array of 2-item arrays:
    * - ["id of each pL it wants to pick from",
    * - numeric percentage out of 100]
-   * NOTE: numerics need to add up to 100.
-   * this function can turns the ids into track arrays
-   * then applies the percentages and picks
    */
   try {
     const objToReturn = {
@@ -25,45 +32,42 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
         // },
       ],
     };
-    let sum = 0;
+    // for each array item in the "mix"....
     for (var i = 0; i < mix.length; i++) {
       try {
         const playlistId = mix[i][0];
-        const percentage = mix[i][1];
+        const percentage = +mix[i][1];
+        // get the playlist name via api
         const playlistName = await getPlaylistName(spotifyApi, playlistId);
+        // save all metadata in the object we eventually return
         objToReturn.compositionData.push({
-          id: i,
+          id: i, // unused
           playlistId,
           percentage,
           playlistName,
         });
-        mix[i][0] = await getWholePlaylist(spotifyApi, playlistId);
-        sum += percentage;
+        // calc how many actual tracks we're gonna pick(minimum of 1 guaranteed)
+        const actualRoundedUpPercentage = Math.ceil(
+          (percentage * numberOfTracks) / 100
+        );
+        // get a list of every track in the playlist
+        const possibles = await getWholePlaylist(spotifyApi, playlistId);
+        // for as many tracks as we're gonna pick in this loop... do so
+        for (var j = 0; j < actualRoundedUpPercentage; j++) {
+          const trackString = selectOne(possibles);
+          objToReturn.tracksToAdd.push(trackString);
+        }
       } catch (e) {
         console.log(e);
       }
     }
-    if (sum !== 100) {
-      console.log("that doesn't add up to 100");
-      return objToReturn;
-    }
-    for (var j = 0; j < numberOfTracks; j++) {
-      const odds = Math.floor(Math.random() * Math.floor(100));
-      let climbingOdds = 0;
-      for (var k = 1; k < mix.length + 1; k++) {
-        const currentOdds = mix[k - 1][1];
-        climbingOdds += currentOdds;
-        if (odds < climbingOdds) {
-          const trackString = selectOne(mix[k - 1][0]);
-          objToReturn.tracksToAdd.push(trackString);
-          break;
-        }
-      }
-    }
-    // remove track-lookup errors
+    // filter out track-lookup errors
     objToReturn.tracksToAdd = objToReturn.tracksToAdd.filter(
       (t) => t !== "spotify:track:null"
     );
+    // shuffle
+    objToReturn.tracksToAdd = shuffle(objToReturn.tracksToAdd);
+    // return
     return objToReturn;
   } catch (error) {
     console.log(error);

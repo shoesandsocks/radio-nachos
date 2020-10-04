@@ -19,8 +19,9 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
     const { tracksToAdd, compositionData } = tracksAndCompositionData;
     const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
     return [listId, compositionData, timestamp];
-  } catch (error) {
-    console.log({ error });
-    return [];
+  } catch (err) {
+    console.log(err);
+    // this return mocks empty version of success?
+    return ["", [], now()];
   }
 };

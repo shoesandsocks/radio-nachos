@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express"); // Express web server framework
 const request = require("request"); // "Request" library
 const cors = require("cors");
@@ -30,6 +31,10 @@ MongoClient.connect(
     console.log("Connected to Database");
     const db = client.db("radio-nachos");
     const collection = db.collection("playlists");
+    // app.get("/react", (req, res) =>
+    //   res.sendFile(path.join(__dirname, "build", "index.html"))
+    // );
+    app.use("/react", express.static(__dirname + "/build"));
     app
       .use(
         express.static(__dirname + "/public", {
@@ -83,7 +88,7 @@ MongoClient.connect(
           if (!error && response.statusCode === 200) {
             const { access_token, refresh_token } = body;
             spotifyApi.setAccessToken(access_token);
-            res.redirect(`loggedin`);
+            res.redirect("react");
           } else {
             res.redirect(
               `/#${querystring.stringify({ error: "invalid_token" })}`
@@ -94,14 +99,14 @@ MongoClient.connect(
     });
     app.post("/deletePlaylist", (req, res) => {
       const { idToDelete } = req.body;
+      // just in case FE passes wrong thing
+      const listId = idToDelete.replace("playlist-", "");
       collection
-        .deleteOne({ listId: idToDelete })
+        .deleteOne({ listId })
         .then(async () => {
-          const SpotSuccess = await spotifyApi.unfollowPlaylist(idToDelete);
+          const SpotSuccess = await spotifyApi.unfollowPlaylist(listId);
         })
-        .then(() => {
-          return res.json({ message: `deleted` });
-        })
+        .then(() => res.json({ message: `deleted` }))
         .catch((e) => {
           console.log(e);
           return res.sendStatus(500);
@@ -109,7 +114,7 @@ MongoClient.connect(
     });
     app.post("/playlistlookup", async (req, res) => {
       const { str } = req.body;
-      ident = str.split(":")[2];
+      ident = str.replace("spotify:playlist:", "");
       const name = await getPlaylistName(spotifyApi, ident);
       if (name) return res.json({ name });
       return res.json({ error: "not found " });
@@ -134,6 +139,7 @@ MongoClient.connect(
         });
         return res.json({ listId, timestamp });
       } catch (err) {
+        console.log("make err -> ", err);
         return res.json({ error: "Something failed in making " });
       }
     });
@@ -155,7 +161,6 @@ MongoClient.connect(
           .toArray();
         return res.json({ playlists, compositions });
       } catch (e) {
-        console.log(e);
         res.json({ error: "you are not logged into Spotify." });
       }
     });

@@ -25,15 +25,16 @@
 }
 body {
   font-family: "Montserrat 200", Arial;
+  text-align: center;
 }
-main {
+.App {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-flow: column nowrap;
 }
 form {
-  width: 600px;
+  width: 800px;
   padding: 2rem 0;
 }
 fieldset {
@@ -47,6 +48,7 @@ input[type="range"] {
 }
 ul {
   padding: 0;
+  width: 600px;
 }
 li {
   list-style-type: none;
@@ -55,7 +57,6 @@ li a {
   display: grid;
   grid-template-columns: 100px 1fr;
   background-color: var(--black);
-  width: 600px;
   cursor: pointer;
   text-decoration: none;
   transition-duration: 0.2s;
@@ -250,6 +251,7 @@ input[type="number"] {
   margin-left: 0.75rem;
   height: 1.5rem;
   cursor: pointer;
+  min-width: 100px;
 }
 .remove-entry-button {
   background: crimson;
@@ -257,22 +259,13 @@ input[type="number"] {
 .one-playlist-line {
   display: flex;
   justify-content: space-between;
+  text-align: left;
 }
 .buttons {
   display: flex;
   width: 85%;
   justify-content: space-between;
   margin-top: 2rem;
-}
-
-#reset {
-  position: absolute;
-  top: -2px;
-  right: -1px;
-  border: none;
-  background-color: crimson;
-  color: white;
-  padding: 4px 8px;
 }
 
 .visually-hidden {
@@ -289,4 +282,8 @@ input[type="number"] {
 
 .delete-playlist-btn {
   background: crimson;
+}
+#global-error {
+  font-size: 1.25rem;
+  color: crimson;
 }
