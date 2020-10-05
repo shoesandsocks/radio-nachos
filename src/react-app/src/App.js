@@ -113,6 +113,7 @@ function App() {
     ]);
     setSubmission(newSub);
     setNumberOfTracks(tracks);
+    window.scrollTo(0, 0);
   };
   const deletePlaylist = (e) => {
     const { id } = e.target;
