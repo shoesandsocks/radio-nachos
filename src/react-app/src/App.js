@@ -113,7 +113,11 @@ function App() {
     ]);
     setSubmission(newSub);
     setNumberOfTracks(tracks);
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
   };
   const deletePlaylist = (e) => {
     const { id } = e.target;
