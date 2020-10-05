@@ -125,7 +125,7 @@ MongoClient.connect(
       ident = str.replace("spotify:playlist:", "");
       const name = await getPlaylistName(spotifyApi, ident);
       if (name) return res.json({ name });
-      return res.json({ error: "not found " });
+      return res.json({ error: "Playlist not found" });
     });
     app.post("/make", async (req, res) => {
       try {
@@ -161,7 +161,10 @@ MongoClient.connect(
         return res.json({ error });
       } catch (err) {
         console.log("make err -> ", err);
-        return res.json({ error: "Something failed in making " });
+        if (err.statusCode === 401) {
+          return res.json({ error: "Try logging in again; sorry." });
+        }
+        return res.json({ error: "Something failed. Are you logged in?" });
       }
     });
 

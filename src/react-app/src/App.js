@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import renderFormLine from "./helpers/renderFormLine";
 import makePrevPlaylists from "./helpers/makePrevPlaylists";
+import handleLookup from "./helpers/handleLookup";
 
 function App() {
   const [numberOfTracks, setNumberOfTracks] = useState(20);
@@ -16,28 +17,19 @@ function App() {
       .then((json) => setPrevs(json))
       .catch((e) => {
         console.log(e);
+        return displayError("Error. Are you logged in?");
         // const url = new URL(window.location.href);
         // alert(JSON.stringify(url), "You're not logged in to Spotify");
         // return (window.location.href = url.origin);
       });
   }, []);
-  const handleLookup = (str, num) => {
-    fetch("/playlistlookup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ str }),
-    })
-      .then((r) => r.json())
-      .then(({ error, name }) => {
-        console.log(error);
-        const newSub = [...submission];
-        newSub[num][2] = name ? name : "";
-        return setSubmission(newSub);
-      })
-      .catch((e) => console.log(e));
+
+  const displayError = (msg) => {
+    setIsCreating(false);
+    setTimeout(() => setGlobalError(""), 7000);
+    return setGlobalError(msg);
   };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "tracks") setNumberOfTracks(value);
@@ -47,7 +39,7 @@ function App() {
       newSub[num][0] = value;
       // setSubmission(newSub);
       if (value.match(/^spotify:playlist:[a-zA-Z0-9]{22}$/)) {
-        handleLookup(value, num);
+        handleLookup(value, num, submission, setSubmission, displayError);
       } else {
         newSub[num][2] = "";
         setSubmission(newSub);
@@ -72,19 +64,19 @@ function App() {
     );
     setSubmission(newSub);
   };
+
   const calcTotal = (submission) =>
     submission.reduce((acc, curr) => acc + Number(curr[1]), 0);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsCreating(true);
     if (calcTotal(submission) !== 100) {
-      setTimeout(() => setGlobalError(""), 7000);
-      return setGlobalError("C'mon. That's not 100%, Brad.");
+      return displayError("C'mon. That's not 100%, Brad.");
     }
-    const bort = submission.map((s) => s[2]);
-    if (bort.includes("")) {
-      setTimeout(() => setGlobalError(""), 7000);
-      return setGlobalError("Missing a valid playlist there?");
+    const allPlaylistNames = submission.map((s) => s[2]);
+    if (allPlaylistNames.includes("")) {
+      return displayError("Missing a valid playlist there?");
     }
     fetch("/make", {
       method: "POST",
@@ -99,12 +91,15 @@ function App() {
       .then((r) => r.json())
       .then((json) => {
         const { listId, timestamp, error } = json;
-        if (error) return alert(error);
+        if (error) {
+          return displayError(error);
+        }
         const url = new URL(window.location.href);
         return (window.location.href = `${url.origin}/radio?listId=${listId}&timestamp=${timestamp}`);
       })
       .catch((e) => {
         console.log(e);
+        return displayError("Serious failure; sorry.");
       });
   };
 
