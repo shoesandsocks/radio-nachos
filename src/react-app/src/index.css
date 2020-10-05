@@ -102,9 +102,11 @@ li a p {
 }
 #submit-btn {
   background: grey;
+  cursor: unset;
 }
 #submit-btn:enabled {
   background: var(--spotify);
+  cursor: pointer;
 }
 .delete-playlist-btn,
 .make-another-btn,
