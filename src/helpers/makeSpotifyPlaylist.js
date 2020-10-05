@@ -18,7 +18,12 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
     );
     const { tracksToAdd, compositionData } = tracksAndCompositionData;
     const addEm = await spotifyApi.addTracksToPlaylist(listId, tracksToAdd);
-    return [listId, compositionData, timestamp];
+    if (addEm.statusCode === 201) {
+      return { listId, compositionData, timestamp };
+    }
+    // it failed; undo the playlist
+    const remov = await spotifyApi.unfollowPlaylist(listId);
+    return { error: "makeSpotifyPlaylist failed." };
   } catch (err) {
     console.log(err);
     // this return mocks empty version of success?

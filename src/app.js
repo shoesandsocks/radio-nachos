@@ -134,18 +134,31 @@ MongoClient.connect(
         // const mix = [
         //   [eightiesId, 100],
         // ];
-        const [listId, compositionData, timestamp] = await makeSpotifyPlaylist(
+        const {
+          error,
+          listId,
+          compositionData,
+          timestamp,
+        } = await makeSpotifyPlaylist(
           spotifyApi,
           numberOfTracks,
           arrayOfArrays
         );
-        const newEntry = await collection.insertOne({
-          timestamp: timestamp.toString(),
-          numberOfTracks,
-          listId,
-          compositionData,
-        });
-        return res.json({ listId, timestamp });
+        if (!error) {
+          const newEntry = await collection.insertOne({
+            timestamp: timestamp.toString(),
+            numberOfTracks,
+            listId,
+            compositionData,
+          });
+          if (newEntry.result.ok === 1) {
+            return res.json({ listId, timestamp });
+          }
+          return res.json({
+            error: "something went wrong writing to database",
+          });
+        }
+        return res.json({ error });
       } catch (err) {
         console.log("make err -> ", err);
         return res.json({ error: "Something failed in making " });
