@@ -60,11 +60,9 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
             const index = possibles.indexOf(
               trackString.replace("spotify:track:", "")
             );
-            console.log(possibles.length, trackString, index);
             if (index > -1) {
               possibles.splice(index, 1);
             }
-            console.log(possibles.length);
           } else {
             console.log("i ran out of tracks to select from");
           }

@@ -100,9 +100,15 @@ li a p {
   border-radius: 26px;
   cursor: pointer;
 }
+#submit-btn {
+  background: grey;
+}
+#submit-btn:enabled {
+  background: var(--spotify);
+}
 .delete-playlist-btn,
 .make-another-btn,
-#submit-btn:hover {
+#submit-btn:enabled:hover {
   transform: translate3d(1px, 1px, 0);
 }
 /** css tricks*/
