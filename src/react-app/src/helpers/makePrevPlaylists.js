@@ -137,7 +137,10 @@ export default (prevs, setSubmission, setNumberOfTracks) => {
   } catch (er) {
     console.log(er, "error mapping playlists");
     return (
-      <a href="/">Something failed catastrophically. Try logging in again.</a>
+      <a href="/">
+        Something failed catastrophically. Try logging in again. You might need
+        to message me.
+      </a>
     );
   }
 };

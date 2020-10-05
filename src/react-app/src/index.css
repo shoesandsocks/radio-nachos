@@ -91,8 +91,7 @@ li a p {
 }
 
 .delete-playlist-btn,
-.make-another-btn,
-#submit-btn {
+.make-another-btn {
   background: var(--spotify);
   padding: 1rem 2rem;
   color: white;
@@ -103,11 +102,17 @@ li a p {
 #submit-btn {
   background: grey;
   cursor: unset;
+  width: 170px;
+  height: 48px;
+  color: white;
+  border: none;
+  border-radius: 26px;
 }
 #submit-btn:enabled {
   background: var(--spotify);
   cursor: pointer;
 }
+
 .delete-playlist-btn,
 .make-another-btn,
 #submit-btn:enabled:hover {
@@ -280,6 +285,10 @@ input[type="number"] {
   display: none;
 }
 
+#spinner {
+  animation: spin 1s linear infinite;
+}
+
 .playlist-buttons {
   width: 100%;
   display: flex;
@@ -294,4 +303,10 @@ input[type="number"] {
 #global-error {
   font-size: 1.25rem;
   color: crimson;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
