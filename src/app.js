@@ -41,8 +41,12 @@ MongoClient.connect(
     const collection = db.collection("playlists");
 
     app.use("/react", express.static(__dirname + "/react"));
+    app.use(
+      express.static(__dirname + "/public", {
+        extensions: ["html"],
+      })
+    );
     app
-      .use("/", express.static(__dirname + "/public"))
       .use(cors())
       .use(cookieParser())
       .use(express.urlencoded({ extended: true }))
