@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import renderFormLine from "./helpers/renderFormLine";
 import makePrevPlaylists from "./helpers/makePrevPlaylists";
 import handleLookup from "./helpers/handleLookup";
+import ErrorBoundary from "./helpers/ErrorBoundary";
 
 const spinner = () => (
   <svg
@@ -29,11 +30,7 @@ function App() {
       .then((x) => x.json())
       .then((json) => setPrevs(json))
       .catch((e) => {
-        console.log(e);
-        return displayError("Error. Are you logged in?");
-        // const url = new URL(window.location.href);
-        // alert(JSON.stringify(url), "You're not logged in to Spotify");
-        // return (window.location.href = url.origin);
+        window.location.replace("/");
       });
   }, []);
 
@@ -119,63 +116,65 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>radio nachos playmaker</h1>
-      <form id="creator-form">
-        <fieldset id="fieldset">
-          <div id="all-entries">
-            {submission.map((array, index) =>
-              renderFormLine(
-                index,
-                array,
-                handleInputChange,
-                addFormLine,
-                removeFormLine,
-                index === submission.length - 1,
-                submission.length === 1
-              )
-            )}
-          </div>
-          <p id="total">{calcTotal(submission)}</p>
-          <p id="currentVal">{numberOfTracks}</p>
+    <ErrorBoundary>
+      <div className="App">
+        <h1>radio nachos playmaker</h1>
+        <form id="creator-form">
+          <fieldset id="fieldset">
+            <div id="all-entries">
+              {submission.map((array, index) =>
+                renderFormLine(
+                  index,
+                  array,
+                  handleInputChange,
+                  addFormLine,
+                  removeFormLine,
+                  index === submission.length - 1,
+                  submission.length === 1
+                )
+              )}
+            </div>
+            <p id="total">{calcTotal(submission)}</p>
+            <p id="currentVal">{numberOfTracks}</p>
 
-          <label htmlFor="tracks">how many tracks? (10 - 99)</label>
-          <br />
-          <input
-            type="range"
-            id="tracks-input"
-            name="tracks"
-            value={numberOfTracks}
-            min="10"
-            max="99"
-            step="1"
-            onChange={handleInputChange}
-          />
-          <br />
-          <div id="count-and-button">
-            <span id="global-error">{globalError}</span>
-            <button
-              id="submit-btn"
-              type="submit"
-              onClick={handleSubmit}
-              disabled={isCreating}
-            >
-              {isCreating ? <span>{spinner()}</span> : "create playlist"}
-            </button>
-          </div>
-        </fieldset>
-      </form>
+            <label htmlFor="tracks">how many tracks? (10 - 99)</label>
+            <br />
+            <input
+              type="range"
+              id="tracks-input"
+              name="tracks"
+              value={numberOfTracks}
+              min="10"
+              max="99"
+              step="1"
+              onChange={handleInputChange}
+            />
+            <br />
+            <div id="count-and-button">
+              <span id="global-error">{globalError}</span>
+              <button
+                id="submit-btn"
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isCreating}
+              >
+                {isCreating ? <span>{spinner()}</span> : "create playlist"}
+              </button>
+            </div>
+          </fieldset>
+        </form>
 
-      <h2>Previous playlists</h2>
-      <ul id="previous">
-        {!prevs.playlists.length && (
-          <li>
-            <p id="nope">you have no previous playlists</p>
-          </li>
-        )}
-        {makePrevPlaylists(prevs, setSubmission, setNumberOfTracks)}
-      </ul>
-    </div>
+        <h2>Previous playlists</h2>
+        <ul id="previous">
+          {!prevs.playlists.length && (
+            <li>
+              <p id="nope">you have no previous playlists</p>
+            </li>
+          )}
+          {makePrevPlaylists(prevs, setSubmission, setNumberOfTracks)}
+        </ul>
+      </div>
+    </ErrorBoundary>
   );
 }
 

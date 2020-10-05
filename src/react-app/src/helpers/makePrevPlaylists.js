@@ -139,8 +139,8 @@ export default (prevs, setSubmission, setNumberOfTracks) => {
     return (
       <p>
         Something failed catastrophically. If you have a blank radio-nachos
-        playlist in your Spotify account, delete it.{" "}
-        <a href="/">Try logging in again.</a> You might need to message me.
+        playlist in your Spotify account, delete it and reload. Otherwise,
+        <a href="/">try logging in again.</a> You might need to message me.
       </p>
     );
   }

@@ -39,10 +39,8 @@ MongoClient.connect(
     console.log("Connected to Database");
     const db = client.db("radio-nachos");
     const collection = db.collection("playlists");
-    // app.get("/react", (req, res) =>
-    //   res.sendFile(path.join(__dirname, "build", "index.html"))
-    // );
-    app.use("/react", express.static(__dirname + "/build"));
+
+    app.use("/react", express.static(__dirname + "/react"));
     app
       .use(
         express.static(__dirname + "/public", {
