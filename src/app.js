@@ -99,20 +99,24 @@ MongoClient.connect(
         });
       }
     });
-    app.post("/deletePlaylist", (req, res) => {
+    app.post("/deletePlaylist", async (req, res) => {
       const { idToDelete } = req.body;
-      // just in case FE passes wrong thing
+      if (!idToDelete) {
+        res.json({ error: "something really wrong" });
+      }
       const listId = idToDelete.replace("playlist-", "");
-      collection
-        .deleteOne({ listId })
-        .then(async () => {
-          const SpotSuccess = await spotifyApi.unfollowPlaylist(listId);
-        })
-        .then(() => res.json({ message: `deleted` }))
-        .catch((e) => {
-          console.log(e);
-          return res.sendStatus(500);
-        });
+      const SpotSuccess = await spotifyApi.unfollowPlaylist(listId);
+      if (SpotSuccess.statusCode === 200) {
+        return collection
+          .deleteOne({ listId })
+          .then(() => res.json({ message: `deleted` }))
+          .catch((e) => {
+            console.log(e);
+            return res.json({ error: "failed to delete from database" });
+          });
+      } else {
+        return res.json({ error: "failed to delete from Spotify" });
+      }
     });
     app.post("/playlistlookup", async (req, res) => {
       const { str } = req.body;

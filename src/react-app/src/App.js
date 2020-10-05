@@ -171,7 +171,12 @@ function App() {
               <p id="nope">you have no previous playlists</p>
             </li>
           )}
-          {makePrevPlaylists(prevs, setSubmission, setNumberOfTracks)}
+          {makePrevPlaylists(
+            prevs,
+            setSubmission,
+            setNumberOfTracks,
+            displayError
+          )}
         </ul>
       </div>
     </ErrorBoundary>

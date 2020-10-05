@@ -1,6 +1,6 @@
 import React from "react";
 
-export default (prevs, setSubmission, setNumberOfTracks) => {
+export default (prevs, setSubmission, setNumberOfTracks, displayError) => {
   const populateForm = (e) => {
     const composition = JSON.parse(e.target.dataset.composition);
     const { tracks } = e.target.dataset;
@@ -27,16 +27,15 @@ export default (prevs, setSubmission, setNumberOfTracks) => {
       },
       body: JSON.stringify({ idToDelete }),
     })
-      .then((r) => {
-        if (r.status === 200) {
-          window.location.reload();
-        } else {
-          alert(`Something went wrong. Server status: ${r.status}`);
+      .then((r) => r.json())
+      .then((json) => {
+        console.log(json);
+        if (json.error) {
+          return displayError(json.error);
         }
+        return window.location.reload();
       })
-      .catch((e) => {
-        alert(`Something went wrong. ${JSON.stringify(e)}`);
-      });
+      .catch(() => window.location.replace("/"));
   };
 
   try {
