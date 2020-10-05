@@ -137,10 +137,11 @@ export default (prevs, setSubmission, setNumberOfTracks) => {
   } catch (er) {
     console.log(er, "error mapping playlists");
     return (
-      <a href="/">
-        Something failed catastrophically. Try logging in again. You might need
-        to message me.
-      </a>
+      <p>
+        Something failed catastrophically. If you have a blank radio-nachos
+        playlist in your Spotify account, delete it.{" "}
+        <a href="/">Try logging in again.</a> You might need to message me.
+      </p>
     );
   }
 };
