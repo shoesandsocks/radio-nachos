@@ -41,7 +41,7 @@ MongoClient.connect(
     const collection = db.collection("playlists");
 
     app.use("/react", express.static("react"));
-    app.use(express.static("public"));
+    app.use(express.static("public", { extensions: ["html"] }));
     app
       .use(cors())
       .use(cookieParser())
