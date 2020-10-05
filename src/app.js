@@ -40,12 +40,8 @@ MongoClient.connect(
     const db = client.db("radio-nachos");
     const collection = db.collection("playlists");
 
-    app.use("/react", express.static(__dirname + "/react"));
-    app.use(
-      express.static(__dirname + "/public", {
-        extensions: ["html"],
-      })
-    );
+    app.use("/react", express.static("/react"));
+    app.use(express.static("/public"));
     app
       .use(cors())
       .use(cookieParser())
