@@ -87,10 +87,12 @@ function App() {
     if (calcTotal(submission) !== 100) {
       return displayError("C'mon. That's not 100%, Brad.");
     }
+    const sizes = submission.filter((s) => s.length !== 3);
+    if (sizes.length > 0) return displayError("You missed a playlist, there.");
     const allPlaylistNames = submission.map((s) => s[2]);
-    if (allPlaylistNames.includes("")) {
+    if (allPlaylistNames.includes(""))
       return displayError("Missing a valid playlist there?");
-    }
+
     fetch("/make", {
       method: "POST",
       headers: {

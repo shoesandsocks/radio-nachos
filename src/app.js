@@ -123,9 +123,8 @@ MongoClient.connect(
     app.post("/playlistlookup", async (req, res) => {
       const { str } = req.body;
       ident = str.replace("spotify:playlist:", "");
-      const name = await getPlaylistName(spotifyApi, ident);
-      if (name) return res.json({ name });
-      return res.json({ error: "Playlist not found" });
+      const { error, playlistName } = await getPlaylistName(spotifyApi, ident);
+      return error ? res.json({ error }) : res.json({ name: playlistName });
     });
     app.post("/make", async (req, res) => {
       try {

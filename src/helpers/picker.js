@@ -38,7 +38,11 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
         const playlistId = mix[i][0];
         const percentage = +mix[i][1];
         // get the playlist name via api
-        const playlistName = await getPlaylistName(spotifyApi, playlistId);
+        const { error, playlistName } = await getPlaylistName(
+          spotifyApi,
+          playlistId
+        );
+        if (error) throw new Error(error);
         // save all metadata in the object we eventually return
         objToReturn.compositionData.push({
           id: i, // unused
@@ -68,6 +72,7 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
           }
         }
       } catch (e) {
+        console.log("inner try-catch failure; probably on getPlaylistName?");
         console.log(e);
       }
     }
