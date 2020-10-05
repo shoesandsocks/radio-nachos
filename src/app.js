@@ -15,8 +15,13 @@ const spotifyApi = new SpotifyApi();
 const port = process.env.PORT;
 const client_id = process.env.CID;
 const client_secret = process.env.CS;
+
+const env = process.env.NODE_ENV;
+
+console.log(`we are in ${env}`);
+
 const redirect_uri =
-  process.env.NODE === "production"
+  env === "production"
     ? "https://radio-nachos.herokuapp.com/callback"
     : "http://localhost:8888/callback";
 // const redirect_uri = "https://www.porknachos.com/node/spotify-callback";
