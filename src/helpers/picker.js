@@ -54,8 +54,20 @@ module.exports = async (spotifyApi, numberOfTracks, mix) => {
         const possibles = await getWholePlaylist(spotifyApi, playlistId);
         // for as many tracks as we're gonna pick in this loop... do so
         for (var j = 0; j < actualRoundedUpPercentage; j++) {
-          const trackString = selectOne(possibles);
-          objToReturn.tracksToAdd.push(trackString);
+          if (possibles.length > 0) {
+            const trackString = selectOne(possibles);
+            objToReturn.tracksToAdd.push(trackString);
+            const index = possibles.indexOf(
+              trackString.replace("spotify:track:", "")
+            );
+            console.log(possibles.length, trackString, index);
+            if (index > -1) {
+              possibles.splice(index, 1);
+            }
+            console.log(possibles.length);
+          } else {
+            console.log("i ran out of tracks to select from");
+          }
         }
       } catch (e) {
         console.log(e);
