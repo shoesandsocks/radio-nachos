@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildreact": "./node_modules/rimraf/bin.js src/build && cd src/react-app && npm run build && cd ../.. && nodemon src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,7 @@
     "express": "^4.17.1",
     "mongodb": "^3.6.2",
     "request": "^2.88.2",
+    "rimraf": "^3.0.2",
     "spotify-web-api-node": "^4.0.0"
   }
 }
