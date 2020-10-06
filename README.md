@@ -1,13 +1,10 @@
 # radio-nachos
 
-Somewhat brittle demo at [https://radio-nachos.herokuapp.com/](https://radio-nachos.herokuapp.com/)
+Demo at [https://radio-nachos.herokuapp.com/](https://radio-nachos.herokuapp.com/)
 
-It should work, but _don't_:
+No longer considered "brittle"... it works. Heads up: don't rename playlists it creates -- leave the 'radio-nachos-12345677' name as-is (the number is a timestamp and id. Hm. Maybe renaming should be a feature request)
 
-- rename a playlist in Spotify. Leave the 'radio-nachos-12345677' name as-is (the number is a timestamp and id)
-- delete the playlist anywhere other than in this app (won't break your Spotify but this app won't work, I suspect. It's a Spotify/database mismatch thing)
-
-A playlist maker... from playlists
+## A playlist maker... from playlists
 
 I was thinking about college radio and how the best (IMO) stations/students play a mix of old-school "college rock" and more recent indie/rock/pop.
 They throw in weird stuff, because all college DJs do, but they don't over-do it.
