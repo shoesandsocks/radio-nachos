@@ -28,14 +28,50 @@ body {
   text-align: center;
 }
 .App {
+  display: grid;
+  grid-template-columns: 50px 1fr 3fr 50px;
+}
+/* .App {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-flow: column nowrap;
+} */
+h1 {
+  grid-column-start: 1;
+  grid-column-end: 5;
+}
+.primary {
+  grid-column-start: 3;
+  grid-column-end: 5;
+  padding: 2rem;
+}
+.sidebar {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+.recent-wrap {
+  margin: 0.325rem 0;
+}
+.recent-name,
+.recent-id {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.recent-name a,
+.recent-name a:visited,
+.recent-name a:focus,
+.recent-name a:hover {
+  color: var(--spotify);
+}
+.recent-name {
+  font-size: 1rem;
+  font-weight: bold;
 }
 form {
   width: 800px;
   padding: 2rem 0;
+  margin: 0 auto;
 }
 fieldset {
   padding-top: 2rem;
@@ -48,7 +84,7 @@ input[type="range"] {
 }
 ul {
   padding: 0;
-  width: 600px;
+  margin: 0 auto;
 }
 li {
   list-style-type: none;
@@ -93,7 +129,7 @@ li a p {
 .delete-playlist-btn,
 .make-another-btn {
   background: var(--spotify);
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
   color: white;
   border: none;
   border-radius: 26px;

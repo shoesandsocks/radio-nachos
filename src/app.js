@@ -180,7 +180,29 @@ MongoClient.connect(
         const compositions = await collection
           .find({ timestamp: { $in: dbLookup } })
           .toArray();
-        return res.json({ playlists, compositions });
+
+        const recentPlaylists = await collection
+          .find({})
+          .limit(5)
+          .sort({ _id: 1 })
+          .toArray();
+        const reducedPlaylistData = recentPlaylists.map((pla) => {
+          const oneEntry = pla.compositionData.map((data) => {
+            const { playlistId, playlistName } = data;
+            return { playlistId, playlistName };
+          });
+          return oneEntry;
+        });
+        const flattened = reducedPlaylistData.flat();
+        // https://stackoverflow.com/a/64051726/5937402
+        const filtered = flattened.reduce((thing, current) => {
+          const x = thing.find(
+            (item) => item.playlistId === current.playlistId
+          );
+          return !x ? thing.concat([current]) : thing;
+        }, []);
+
+        return res.json({ recentPlaylists: filtered, playlists, compositions });
       } catch (e) {
         res.json({ error: "you are not logged into Spotify." });
       }
