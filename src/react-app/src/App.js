@@ -44,6 +44,15 @@ function App() {
     return setGlobalError(msg);
   };
 
+  const addRecentToForm = (e) => {
+    const playlistId = e.target.value;
+    const playlistName = e.target.dataset.name;
+    if (playlistId.match(/^spotify:playlist:[a-zA-Z0-9]{22}$/)) {
+      const newSub = submission.concat([[playlistId, 0, playlistName]]);
+      return setSubmission(newSub);
+    }
+    return displayError("that didn't work right.");
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "tracks") setNumberOfTracks(value);
@@ -122,7 +131,7 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="App">
-        <h1>radio nachos playmaker</h1>
+        <h1>radio nachos</h1>
         <div className="sidebar">
           <h2>Your playlists</h2>
           <ul id="previous">
@@ -140,6 +149,7 @@ function App() {
           </ul>
         </div>
         <div className="primary">
+          <h2>playlist maker</h2>
           <form id="creator-form">
             <fieldset id="fieldset">
               <div id="all-entries">
@@ -188,10 +198,22 @@ function App() {
           <ul id="recent-list">
             {prevs.recentPlaylists.map((entry) => (
               <div className="recent-wrap">
-                <p className="recent-name">
-                  <a href={entry.playlistId}>{entry.playlistName}</a>
-                </p>
-                <p className="recent-id">{entry.playlistId}</p>
+                <div className="recent-left-col">
+                  <p className="recent-name">
+                    <a href={entry.playlistId}>{entry.playlistName}</a>
+                  </p>
+                  <p className="recent-id">{entry.playlistId}</p>
+                </div>
+                <div className="recent-right-col">
+                  <button
+                    className="add-recent-playlist"
+                    value={entry.playlistId}
+                    data-name={entry.playlistName}
+                    onClick={addRecentToForm}
+                  >
+                    add to form
+                  </button>
+                </div>
               </div>
             ))}
           </ul>
