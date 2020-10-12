@@ -42,7 +42,10 @@ module.exports = async function (req, res) {
 
     return res.json({ recentPlaylists: filtered, playlists, compositions });
   } catch (e) {
-    console.log(e);
-    res.json({ error: "you are not logged into Spotify." });
+    if (e instanceof TypeError) {
+      console.log(e.message);
+      return res.json({ error: "your session was destroyed (probably)." });
+    }
+    return res.json({ error: "something went terribly wrong." });
   }
 };

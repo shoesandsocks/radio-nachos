@@ -54,7 +54,7 @@ MongoClient.connect(
       httpOnly: true,
       cookie: {
         sameSite: "strict",
-        maxAge: 360000,
+        maxAge: 3600000, // 60 minutes in millis
       },
     };
     if (isProd) {
